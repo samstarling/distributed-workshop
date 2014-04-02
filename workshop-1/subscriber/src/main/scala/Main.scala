@@ -6,12 +6,17 @@ object Main extends App {
   val connection = ConnectionFactory.connect()
   val channel = connection.subscribe("BBC")
 
-
-  def consume(): Unit = {
+  def consume(count: Int): Unit = {
     val message = channel.read
-    println(message)
-    if (message != "END") consume()
+
+    if (message != "END") {
+      val isDaniel = message.toString.contains("Daniel")
+      val newCount = if (isDaniel) count else count + 1
+      consume(newCount)
+    } else {
+      print(s"Counted ${count}")
+    }
   }
 
-  println("End")
+  consume(0)
 }

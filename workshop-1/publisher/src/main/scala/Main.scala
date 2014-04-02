@@ -10,4 +10,6 @@ object Main extends App {
   source.getLines.foreach(line => {
     channel.write(line)
   })
+
+  channel.write("END")
 }

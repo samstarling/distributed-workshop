@@ -6,9 +6,11 @@ object Main extends App {
   val connection = ConnectionFactory.connect()
   val channel = connection.subscribe("BBC")
 
-  var msg = channel.read()
-  while (msg != null) {
-    println(msg)
+
+  def consume(): Unit = {
+    val message = channel.read
+    println(message)
+    if (message != "END") consume()
   }
 
   println("End")

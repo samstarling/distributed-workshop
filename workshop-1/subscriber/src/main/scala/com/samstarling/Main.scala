@@ -1,17 +1,13 @@
-package com.scala
+package com.samstarling
 
-import com.zink.queue.ConnectionFactory
 
 object Main extends App {
-  val connection = ConnectionFactory.connect()
-  val channel = connection.subscribe("BBC")
-
   def consume(count: Int): Unit = {
-    val message = channel.read
+    val message = Consumer.consume
 
     if (message != "END") {
       val isDaniel = message.toString.contains("Daniel")
-      val newCount = if (isDaniel) count else count + 1
+      val newCount = if (isDaniel) (count + 1) else count
       consume(newCount)
     } else {
       print(s"Counted ${count}")
@@ -20,3 +16,4 @@ object Main extends App {
 
   consume(0)
 }
+

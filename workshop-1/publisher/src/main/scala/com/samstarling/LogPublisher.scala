@@ -2,7 +2,7 @@ package com.samstarling
 
 import scala.io.Source
 
-object Publisher {
+object LogPublisher {
   def run = {
     val source = Source.fromFile("/tmp/access.log")
 

@@ -3,7 +3,7 @@ package com.samstarling
 object Main extends App {
   println("--> Publisher")
 
-  Publisher.run
+  LogPublisher.run
   Counter.run
 }
 

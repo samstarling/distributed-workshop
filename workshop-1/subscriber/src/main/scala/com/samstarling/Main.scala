@@ -1,19 +1,26 @@
 package com.samstarling
 
-
 object Main extends App {
-  def consume(count: Int): Unit = {
-    val message = Consumer.consume
+
+  println("--> Subscriber")
+
+  def consume: Unit = {
+    val message = Consumer.read("bbc")
 
     if (message != "END") {
       val isDaniel = message.toString.contains("Daniel")
-      val newCount = if (isDaniel) (count + 1) else count
-      consume(newCount)
+      if (isDaniel) Producer.send("ACK", "reply")
+      consume
     } else {
-      print(s"Counted ${count}")
+      Producer.send("END", "reply")
     }
   }
 
-  consume(0)
+
+  while(true) {
+    println("Consuming...")
+    consume
+    Thread.sleep(1000)
+  }
 }
 

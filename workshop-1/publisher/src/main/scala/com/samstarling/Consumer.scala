@@ -9,3 +9,4 @@ object Consumer {
     connection.subscribe(channel).read
   }
 }
+

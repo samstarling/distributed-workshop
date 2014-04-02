@@ -14,6 +14,7 @@ object Main extends App {
   })
 
   Producer.send("END", "bbc")
+  println("Finished")
 
   def consume(count: Int): Unit = {
     val message = Consumer.read("reply")

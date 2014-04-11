@@ -1,6 +1,6 @@
 package com.samstarling
 
-object MovieClient {
+class MovieClient {
   val base = "https://api.themoviedb.org/3/"
   val key = "?api_key=89e5511513f926ee8ac9569963afa8f2"
 

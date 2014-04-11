@@ -1,11 +1,24 @@
 package com.samstarling
 
 import scala.concurrent._
+import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
 import scala.util.Random
 
-object Main extends App {
+class Consumer(client: MovieClient) {
   val movies = List(41602, 57158, 110415, 255268)
+
+  def run() {
+    1 to 50 foreach { _ =>
+      val movie = Random.shuffle(movies).head
+      client.getDetailById(movie.toString)
+    }
+  }
+}
+
+object Main extends App {
+  val clients = 1 to 5 map { _ => new MovieClient }
+  val consumers = 1 to 5 map { _ => new Consumer(Random.shuffle(clients).head) }
 
   future {
     while(true) {
@@ -14,24 +27,9 @@ object Main extends App {
     }
   }
 
-  1 to 5 foreach { tNo =>
-    future {
-      while(true) {
-        val result = MovieClient.getPopular
-        Thread.sleep(500)
-      }
-    }
+  val futures = consumers map { c =>
+    future { c.run }
   }
 
-  1 to 5 foreach { tNo =>
-    future {
-      1 to 5 foreach { lNo =>
-        val movie = Random.shuffle(movies).head
-        MovieClient.getDetailById(movie.toString)
-        Thread.sleep(500)
-      }
-    }
-  }
-
-  Thread.sleep(60 * 1000)
+  Await.result(Future.sequence(futures), 1.minute)
 }

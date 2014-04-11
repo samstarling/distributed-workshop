@@ -4,6 +4,7 @@ import com.zink.cache.CacheFactory
 
 object Cache {
   val cache = CacheFactory.connect()
+
   var hits = 0
   var misses = 0
 

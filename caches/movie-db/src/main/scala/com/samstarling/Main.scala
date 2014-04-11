@@ -1,7 +1,8 @@
 package com.samstarling
 
 object Main extends App {
-  CacheExercise.run
+  // CacheExercise.run
+  ObjectSpaceExercise.run
 }
 
 

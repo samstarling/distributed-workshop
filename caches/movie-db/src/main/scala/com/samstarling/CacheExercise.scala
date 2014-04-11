@@ -1,7 +1,9 @@
 package com.samstarling
 
 import scala.concurrent._
+import scala.concurrent.duration._
 import scala.util.Random
+import ExecutionContext.Implicits.global
 
 object CacheExercise {
   def run = {

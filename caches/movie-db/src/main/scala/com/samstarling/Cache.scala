@@ -1,24 +1,44 @@
 package com.samstarling
 
 import com.zink.cache.CacheFactory
+import java.util.concurrent.atomic.AtomicInteger
+import scala.util.Random
+import java.text.NumberFormat
+import java.util.Locale
 
 object Cache {
   val cache = CacheFactory.connect()
+  val hits: AtomicInteger = new AtomicInteger()
+  val misses: AtomicInteger = new AtomicInteger()
 
-  var hits = 0
-  var misses = 0
-
-  def getOrPopulate(key: String)(fn: String): String = {
-    if(cache.get(key) == null) {
-      cache.set(key, fn)
-      misses = misses + 1
+  def getOrPopulate(key: String)(fn: => String): String = {
+    val result = cache.get(key)
+    if(result == null) {
+      val response = fn
+      cache.set(key, response)
+      cache.expire(key, Random.nextInt(1000))
+      misses.getAndIncrement
+      response
     } else {
-      hits = hits + 1
+      hits.getAndIncrement
+      result.toString
     }
-    cache.get(key).toString
   }
 
+  def friendlyHits = NumberFormat.getNumberInstance(Locale.US).format(hits)
+  def friendlyMisses = NumberFormat.getNumberInstance(Locale.US).format(misses)
+
   override def toString = {
-    s"Hits: ${hits}, misses: ${misses}"
+    s"${Console.GREEN}✔ ${friendlyHits}${Console.RESET}\t${Console.RED}✘ ${friendlyMisses}${Console.RESET}"
+  }
+}
+
+object Utils {
+  def time[A](block: => A): A = {
+    val before = System.currentTimeMillis
+    val result = block
+    val after = System.currentTimeMillis
+    println(s"Time: ${after - before}ms")
+    result
   }
 }

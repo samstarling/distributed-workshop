@@ -32,13 +32,3 @@ object Cache {
     s"${Console.GREEN}✔ ${friendlyHits}${Console.RESET}\t${Console.RED}✘ ${friendlyMisses}${Console.RESET}"
   }
 }
-
-object Utils {
-  def time[A](block: => A): A = {
-    val before = System.currentTimeMillis
-    val result = block
-    val after = System.currentTimeMillis
-    println(s"Time: ${after - before}ms")
-    result
-  }
-}

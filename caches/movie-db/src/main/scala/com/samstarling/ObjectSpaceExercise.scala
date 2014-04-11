@@ -6,8 +6,11 @@ object ObjectSpaceExercise {
   val fly = FlyFactory.makeFly("localhost")
 
   def run = {
-    val movie = Movie("Johan Hjerling", "glorious")
-    fly.write(movie, 60 * 1000)
+    fly.write(Movie("Toy Story", "3"), 60 * 1000)
+    fly.write(Movie("Toy Story 2", "4"), 60 * 1000)
+    fly.write(Movie("Toy Story 3", "5"), 60 * 1000)
+
+    println(fly.readMany(Movie(null, "5"), 1000))
   }
 }
 

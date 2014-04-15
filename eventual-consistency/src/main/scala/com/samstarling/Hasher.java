@@ -8,8 +8,6 @@ public class Hasher {
 
     public static BigInt sha1(String str) { return hash(str, "SHA-1"); }
 
-
-
     private static BigInt hash(String str, String algo) {
         try {
             MessageDigest md = MessageDigest.getInstance(algo);

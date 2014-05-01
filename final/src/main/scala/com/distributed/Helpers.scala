@@ -1,9 +1,11 @@
 package com.distributed
 
 object Helpers {
-  def maybe(chance: Double)(block: => Any) = {
+  def maybe(chance: Double)(success: => Any)(failure: => Any) = {
     if(scala.util.Random.nextFloat() < chance) {
-      block
+      success
+    } else {
+      failure
     }
   }
 }

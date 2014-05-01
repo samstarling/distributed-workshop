@@ -10,11 +10,11 @@ object ClientSimulator extends LogHelper {
 
 trait LogHelper {
   val loggerName = this.getClass.getName
-  lazy val logger = new Logger
+  lazy val logger = new Logger(loggerName)
 }
 
-class Logger {
-  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${Console.RESET} ${msg}")
+case class Logger(loggerName: String) {
+  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${loggerName} ${Console.RESET} ${msg}")
 }
 
 case class Client(name: String) extends LogHelper {

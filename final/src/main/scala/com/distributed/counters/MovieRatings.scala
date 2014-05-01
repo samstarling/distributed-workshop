@@ -1,3 +1,5 @@
+package com.distributed.counters
+
 object MovieRatings {
   var ratingsCounters = collection.mutable.Map[String, PNCounter]()
   var downloadCounters = collection.mutable.Map[String, GCounter]()

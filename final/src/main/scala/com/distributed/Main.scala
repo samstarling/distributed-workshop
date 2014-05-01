@@ -1,10 +1,7 @@
 package com.distributed
 
+import com.distributed.simulator.ClientSimulator
+
 object Main extends App {
-   println("Hello world")
- }
-
-
-
-
-
+  ClientSimulator.run()
+}

@@ -1,6 +1,6 @@
+package com.distributed
+
 import java.net.URL
-import java.net.URLConnection
-import java.util.UUID
 import java.util.Scanner
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -21,6 +21,8 @@ object Movie {
 trait MovieService {
   def getPopular: Seq[String]
   def getDetailsById(id: String): Option[Movie]
+  def rateMovieUp(id: String): Unit
+  def rateMovieDown(id: String): Unit
 }
 
 class MovieServiceImpl extends MovieService {
@@ -28,7 +30,7 @@ class MovieServiceImpl extends MovieService {
   val key  = "?api_key=89e5511513f926ee8ac9569963afa8f2"
   val idRegex = """"id":(\d+)""".r
   
-  def getPopular(): Seq[String] = {
+  def getPopular: Seq[String] = {
     val pop = "movie/popular"
     val result = httpGet(base + pop + key)
     
@@ -37,6 +39,14 @@ class MovieServiceImpl extends MovieService {
   
   def getDetailsById(id: String): Option[Movie] = {
     Movie.fromJson(Json parse httpGet(base + "movie/" + id + key))
+  }
+
+  def rateMovieUp(id: String) = {
+    ???
+  }
+
+  def rateMovieDown(id: String) = {
+    ???
   }
   
   protected def httpGet(uri: String): String = {

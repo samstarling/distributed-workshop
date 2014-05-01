@@ -38,15 +38,16 @@ class MovieServiceImpl extends MovieService {
   }
   
   def getDetailsById(id: String): Option[Movie] = {
+    MovieRatings.incDownloads(id)
     Movie.fromJson(Json parse httpGet(base + "movie/" + id + key))
   }
 
   def rateMovieUp(id: String) = {
-    ???
+    MovieRatings.thumbsUp(id)
   }
 
   def rateMovieDown(id: String) = {
-    ???
+    MovieRatings.thumbsDown(id)
   }
   
   protected def httpGet(uri: String): String = {

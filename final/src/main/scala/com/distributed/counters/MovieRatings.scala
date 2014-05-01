@@ -1,7 +1,6 @@
 package com.distributed.counters
 
 import java.util
-import com.distributed.counters.{GCounter, PNCounter}
 
 class MovieRatings(nodeId: String) {
   var ratingsCounters = collection.mutable.Map[String, PNCounter]()

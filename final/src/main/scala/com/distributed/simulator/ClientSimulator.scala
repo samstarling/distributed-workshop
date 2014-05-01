@@ -1,10 +1,8 @@
 package com.distributed.simulator
 
 import com.distributed.{Helpers, MovieServiceImpl}
-import org.apache.log4j.Logger
 
-
-object ClientSimulator {
+object ClientSimulator extends LogHelper {
   def run(client: Integer) = {
     Client("Foo").run()
   }
@@ -12,7 +10,11 @@ object ClientSimulator {
 
 trait LogHelper {
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = new Logger
+}
+
+class Logger {
+  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${Console.RESET} ${msg}")
 }
 
 case class Client(name: String) extends LogHelper {
@@ -22,6 +24,7 @@ case class Client(name: String) extends LogHelper {
 
   def run() = {
     val movies = fetchPopularMovies()
+    logger.debug(s"Got ${movies.size} movies")
     pickSomeMovies(movies)
   }
 
@@ -30,7 +33,6 @@ case class Client(name: String) extends LogHelper {
   }
 
   def pickSomeMovies(movies: Seq[String]) = {
-    logger.debug("Picking some movies")
     movies.foreach { movie =>
       maybe(0.5) { rateMovie(movie) }
         { logger.debug(s"Decided not to rate $movie") }
@@ -39,9 +41,9 @@ case class Client(name: String) extends LogHelper {
 
   def rateMovie(movie: String) = {
     if (scala.util.Random.nextFloat() > 0.25) {
-      println(s"Rating $movie up")
+      logger.debug(s"Rating $movie up")
     } else {
-      println(s"Rating $movie down")
+      logger.debug(s"Rating $movie down")
     }
   }
 }

@@ -2,23 +2,21 @@ package com.distributed.simulator
 
 import com.distributed.{Helpers, MovieServiceImpl}
 
-object ClientSimulator extends LogHelper {
-  def run(client: Integer) = {
-    Client("Foo").run()
+object ClientSimulator {
+  def run(numberOfClients: Integer) = {
+    1 to 5 foreach { id =>
+      Client(s"client$id").run()
+    }
   }
 }
 
-trait LogHelper {
-  val loggerName = this.getClass.getName
-  lazy val logger = new Logger(loggerName)
-}
-
 case class Logger(loggerName: String) {
-  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${loggerName} ${Console.RESET} ${msg}")
+  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${Console.BLUE_B}$loggerName ${Console.RESET}$msg")
 }
 
-case class Client(name: String) extends LogHelper {
+case class Client(name: String) {
   val movieService = new MovieServiceImpl
+  val logger = new Logger(name)
 
   import Helpers._
 

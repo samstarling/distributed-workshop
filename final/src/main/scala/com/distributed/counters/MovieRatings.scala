@@ -1,3 +1,5 @@
+package com.distributed.counters
+
 import java.util
 import com.distributed.counters.{GCounter, PNCounter}
 

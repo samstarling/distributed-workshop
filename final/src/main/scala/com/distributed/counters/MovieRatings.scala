@@ -20,7 +20,7 @@ object MovieRatings {
       }
     }
   }
-  
+
   def thumbsDown(movie: String) = {
     ratingsCounters.get(movie) match {
       case Some(counter) => counter.dec(movie, 1)

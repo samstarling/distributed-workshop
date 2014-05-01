@@ -22,12 +22,10 @@ case class Client(name: String) {
 
   def pickSomeMovies(movies: Seq[String]) = {
     movies.foreach { movie =>
-      maybe(0.5)
-        { rateMovie(movie) }
+      maybe(0.5) { rateMovie(movie) }
         { logger.debug(s"Decided not to rate $movie") }
 
-      val sleepyTiemz = (1000 * scala.util.Random.nextFloat).toInt
-      Thread.sleep(sleepyTiemz)
+      Thread.sleep((1000 * scala.util.Random.nextFloat).toInt)
     }
   }
 

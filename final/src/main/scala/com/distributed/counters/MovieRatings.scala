@@ -2,19 +2,19 @@ package com.distributed.counters
 
 import java.util
 
-object MovieRatings {
+class MovieRatings(nodeId: String) {
   var ratingsCounters = collection.mutable.Map[String, PNCounter]()
   var downloadCounters = collection.mutable.Map[String, GCounter]()
+  val nodeIds = new util.HashSet[String]
+  nodeIds.add(nodeId)
 
   def thumbsUp(movie: String) = {
     ratingsCounters.get(movie) match {
       case Some(counter) => counter.inc(movie, 1)
       case None => {
-        val movies = new util.HashSet[String]
-        movies.add(movie)
-        val incCounter = new GCounter(movies)
-        val decCounter = new GCounter(movies)
-        val thumbsCounter = new PNCounter(movies, incCounter, decCounter)
+        val incCounter = new GCounter(nodeIds)
+        val decCounter = new GCounter(nodeIds)
+        val thumbsCounter = new PNCounter(nodeIds, incCounter, decCounter);
         thumbsCounter.inc(movie, 1)
         ratingsCounters.put(movie, thumbsCounter)
       }
@@ -25,11 +25,9 @@ object MovieRatings {
     ratingsCounters.get(movie) match {
       case Some(counter) => counter.dec(movie, 1)
       case None => {
-        val movies = new util.HashSet[String]
-        movies.add(movie)
-        val incCounter = new GCounter(movies)
-        val decCounter = new GCounter(movies)
-        val thumbsCounter = new PNCounter(movies, incCounter, decCounter)
+        val incCounter = new GCounter(nodeIds)
+        val decCounter = new GCounter(nodeIds)
+        val thumbsCounter = new PNCounter(nodeIds, incCounter, decCounter);
         thumbsCounter.dec(movie, 1)
         ratingsCounters.put(movie, thumbsCounter)
       }
@@ -49,7 +47,7 @@ object MovieRatings {
       case None => {
         val movies = new util.HashSet[String]
         movies.add(movie)
-        val downloadsCounter = new GCounter(movies)
+        val downloadsCounter = new GCounter(nodeIds)
         downloadsCounter.inc(movie)
         downloadCounters.put(movie, downloadsCounter)
       }

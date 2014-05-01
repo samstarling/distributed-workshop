@@ -1,6 +1,7 @@
 package com.distributed.counters;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,11 +33,12 @@ public class GCounter {
     }
 
     public GCounter merge(GCounter that) {
-        Map<String, Long> mergedVals = new HashMap<String, Long>();
+        Set<String> mergedKeys = new HashSet<String>(nodeVals.keySet());
+        mergedKeys.addAll(that.nodeVals.keySet());
 
-        GCounter mergedCounter = new GCounter(nodeVals.keySet());
+        GCounter mergedCounter = new GCounter(mergedKeys);
 
-        for (String k : nodeVals.keySet()) {
+        for (String k : mergedKeys) {
             Long thatValue = that.getNodeValue(k);
             Long thisValue = nodeVals.get(k);
 

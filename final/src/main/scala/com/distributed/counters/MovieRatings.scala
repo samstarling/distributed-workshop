@@ -1,10 +1,12 @@
 package com.distributed.counters
 
 import java.util
+import com.zink.queue.ConnectionFactory
+import chrisloy.json._
 
 class MovieRatings(nodeId: String) {
-  var ratingsCounters = collection.mutable.Map[String, PNCounter]()
-  var downloadCounters = collection.mutable.Map[String, GCounter]()
+  val ratingsCounters = collection.mutable.Map[String, PNCounter]()
+  val downloadCounters = collection.mutable.Map[String, GCounter]()
   val nodeIds = new util.HashSet[String]
   nodeIds.add(nodeId)
 
@@ -60,4 +62,40 @@ class MovieRatings(nodeId: String) {
       case None => 0
     }
   }
+
+  def mergeDownloadCounters(counters1: collection.mutable.Map[String, GCounter], counters2: collection.mutable.Map[String, GCounter]) {
+    val mergedCounters = collection.mutable.Map[String, GCounter]()
+    mergedCounters ++ counters2
+
+    for((movie, counter) <- counters1) {
+      if (counters2.contains(movie)) {
+        mergedCounters.put (movie, counter merge counters2.get(movie).get)
+      }
+      else {
+        mergedCounters.put (movie, counter)
+      }
+    }
+    mergedCounters
+  }
+
+  def mergeRatingsCounters(counters1: collection.mutable.Map[String, PNCounter], counters2: collection.mutable.Map[String, PNCounter]) {
+    val mergedCounters = collection.mutable.Map[String, PNCounter]()
+    mergedCounters ++ counters2
+
+    for((movie, counter) <- counters1) {
+      if (counters2.contains(movie)) {
+        mergedCounters.put (movie, counter merge counters2.get(movie).get)
+      }
+      else {
+        mergedCounters.put (movie, counter)
+      }
+    }
+    mergedCounters
+  }
+}
+
+object CounterListener {
+  val con = ConnectionFactory.connect()
+  val wq = con.subscribe("a")
+  val countersJson = Json.parse(wq.read.toString)
 }

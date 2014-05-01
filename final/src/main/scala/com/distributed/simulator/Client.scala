@@ -1,11 +1,11 @@
 package com.distributed.simulator
 
-import com.distributed.{Helpers, Logger, MovieServiceImpl}
+import com.distributed._
 import com.distributed.Helpers._
 import com.distributed.Logger
 
 case class Client(name: String) {
-  val movieService = new MovieServiceImpl
+  val movieService = new MovieServiceImpl with Caching
   val logger = new Logger(name)
 
   import Helpers._

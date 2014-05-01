@@ -8,7 +8,9 @@ import com.zink.cache._
 import chrisloy.json._
 import com.distributed.counters._
 
-case class Movie(id: String, title: String) {}
+case class Movie(id: String, title: String) {
+  def asJson(): JsonValue = Json("id" -> id.toInt, "title" -> title)
+}
   
 object Movie {
   def fromJson(json: JsonValue): Option[Movie] = json match {
@@ -20,10 +22,10 @@ object Movie {
 }
 
 trait MovieService {
-  def getPopular: Seq[String]
-  def getDetailsById(id: String): Option[Movie]
-  def rateMovieUp(id: String): Unit
-  def rateMovieDown(id: String): Unit
+  def getPopular: Seq[String] = ???
+  def getDetailsById(id: String): Option[Movie] = ???
+  def rateMovieUp(id: String): Unit = ???
+  def rateMovieDown(id: String): Unit = ???
 }
 
 class MovieServiceImpl extends MovieService {
@@ -31,23 +33,23 @@ class MovieServiceImpl extends MovieService {
   val key  = "?api_key=89e5511513f926ee8ac9569963afa8f2"
   val idRegex = """"id":(\d+)""".r
   
-  def getPopular: Seq[String] = {
+  override def getPopular: Seq[String] = {
     val pop = "movie/popular"
     val result = httpGet(base + pop + key)
     
     (idRegex findAllIn result).matchData.map(_.group(1).toString).toSeq
   }
   
-  def getDetailsById(id: String): Option[Movie] = {
+  override def getDetailsById(id: String): Option[Movie] = {
     MovieRatings.incDownloads(id)
     Movie.fromJson(Json parse httpGet(base + "movie/" + id + key))
   }
 
-  def rateMovieUp(id: String) = {
+  override def rateMovieUp(id: String) = {
     MovieRatings.thumbsUp(id)
   }
 
-  def rateMovieDown(id: String) = {
+  override def rateMovieDown(id: String) = {
     MovieRatings.thumbsDown(id)
   }
   
@@ -62,21 +64,33 @@ class MovieServiceImpl extends MovieService {
 trait Caching extends MovieService { self: MovieService =>
   val cache = CacheFactory.connect()
   
-  def getPopular: Seq[String] = {
+  override def getPopular: Seq[String] = {
     val cacheResult = cache.get("popular")
     
     if (cacheResult != null) cacheResult.toString.split(",")
     else {
-      val result = getPopular
+      val result = super.getPopular
       cache.set("popular", result.mkString(","))
       cache.expire("popular", 60000) // one minute TTL
+      result
+    }
+  }
+  
+  override def getDetailsById(id: String): Option[Movie] = {
+    val cacheResult = cache.get(id)
+    
+    if (cacheResult != null) Movie.fromJson(Json parse cacheResult.toString)
+    else {
+      val result = super.getDetailsById(id)
+      cache.set(id, result.map(_.asJson.render).getOrElse(""))
+      cache.expire(id, 60000) // one minute TTL
       result
     }
   }
 }
 
 object MovieServiceRunner extends App {
-  val service  = new MovieServiceImpl
+  val service  = new MovieServiceImpl with Caching
   val popular = service.getPopular.take(5)
   
   println("Top 5 Movies:")

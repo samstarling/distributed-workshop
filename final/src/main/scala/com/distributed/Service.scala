@@ -5,10 +5,22 @@ import java.util.Scanner
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import com.zink.cache._
+import chrisloy.json._
+
+case class Movie(id: String, title: String) {}
+  
+object Movie {
+  def fromJson(json: JsonValue): Option[Movie] = json match {
+    case JsonObject(fields) => Some(Movie(
+      fields("id").asInstanceOf[JsonNumber].value.toInt.toString, 
+      fields("title").asInstanceOf[JsonString].value))
+    case _ => None
+  }
+}
 
 trait MovieService {
   def getPopular: Seq[String]
-  def getDetailsById(id: String): String
+  def getDetailsById(id: String): Option[Movie]
 }
 
 class MovieServiceImpl extends MovieService {
@@ -23,9 +35,8 @@ class MovieServiceImpl extends MovieService {
     (idRegex findAllIn result).matchData.map(_.group(1).toString).toSeq
   }
   
-  def getDetailsById(id: String): String = {
-    val movie = "movie/"
-    httpGet(base + movie + id + key)
+  def getDetailsById(id: String): Option[Movie] = {
+    Movie.fromJson(Json parse httpGet(base + "movie/" + id + key))
   }
   
   protected def httpGet(uri: String): String = {
@@ -38,10 +49,11 @@ class MovieServiceImpl extends MovieService {
 
 object MovieServiceRunner extends App {
   val service  = new MovieServiceImpl
+  val popular = service.getPopular.take(5)
   
-  println("Popular Movies:")
+  println("Top 5 Movies:")
   
-  for (movieId <- service.getPopular) {
-    println(s"  * $movieId")
+  for (movieId <- popular; movie <- service.getDetailsById(movieId)) {
+    println(s"  * ${movie.title}")
   }
 }

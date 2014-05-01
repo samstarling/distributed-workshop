@@ -6,6 +6,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import com.zink.cache._
 import chrisloy.json._
+import com.distributed.counters._
 
 case class Movie(id: String, title: String) {}
   
@@ -55,6 +56,22 @@ class MovieServiceImpl extends MovieService {
     val scr = new Scanner(conn.getInputStream)
     scr.useDelimiter("\\Z")
     scr.next()
+  }
+}
+
+trait Caching extends MovieService { self: MovieService =>
+  val cache = CacheFactory.connect()
+  
+  def getPopular: Seq[String] = {
+    val cacheResult = cache.get("popular")
+    
+    if (cacheResult != null) cacheResult.toString.split(",")
+    else {
+      val result = getPopular
+      cache.set("popular", result.mkString(","))
+      cache.expire("popular", 60000) // one minute TTL
+      result
+    }
   }
 }
 

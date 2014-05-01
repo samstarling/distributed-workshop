@@ -1,4 +1,4 @@
-name := "Eventual Consistency"
+name := "CDN Service"
 
 version := "1.0.0"
 

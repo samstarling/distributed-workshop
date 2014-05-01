@@ -1,4 +1,4 @@
-package com.samstarling
+package com.samstarling.old
 
 case class RingNode(name: String) {
   val hashes = List(

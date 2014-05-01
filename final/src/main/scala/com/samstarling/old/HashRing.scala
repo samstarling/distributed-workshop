@@ -1,4 +1,6 @@
-package com.samstarling
+package com.samstarling.old
+
+import com.samstarling.old.RingNode
 
 case class HashRing(size: BigInt = 64000) {
   val ring = new Array[RingNode](size.intValue)

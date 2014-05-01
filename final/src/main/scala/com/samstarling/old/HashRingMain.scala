@@ -1,4 +1,6 @@
-package com.samstarling
+package com.samstarling.old
+
+import com.samstarling.old.RingNode
 
 object HashRingMain {
   val hashRing = HashRing()

@@ -1,4 +1,4 @@
-package com.samstarling
+package com.samstarling.old
 
 import scala.collection.mutable
 
@@ -15,21 +15,18 @@ case class GCounter(values: mutable.Map[String, Int] = mutable.Map.empty) {
     values.foldLeft(0)(_+_._2)
   }
 
-  def merge(that: GCounter): GCounter = {
+  def getForNode(node: String) = {
+    values.get(node) getOrElse 0
+  }
 
+  def merge(that: GCounter): GCounter = {
     val tuples =
       for (node <- this.values.keys.toSet ++ that.values.keys.toSet)
       yield node -> math.max(this.getForNode(node), that.getForNode(node))
 
     val result = mutable.Map[String, Int]()
-    tuples.foreach(x => {
-      result.put(x._1, x._2)
-    })
+    tuples.foreach(item => result.put(item._1, item._2))
 
     GCounter(result)
-  }
-
-  def getForNode(node: String) = {
-    values.get(node) getOrElse 0
   }
 }

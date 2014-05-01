@@ -1,10 +1,12 @@
 package com.distributed.simulator
 
-import com.distributed.MovieServiceImpl
+import com.distributed.{Helpers, MovieServiceImpl}
 
 object ClientSimulator {
 
   val movieService = new MovieServiceImpl
+
+  import Helpers._
 
   def run() = {
     println("LOL i'm simulating a client!")
@@ -19,7 +21,7 @@ object ClientSimulator {
   def pickSomeMovies(movies: Seq[String]) = {
     println("Picking some movies")
     movies.foreach { movie =>
-      Helpers.maybe(0.5) { rateMovie(movie) }
+      maybe(0.5) { rateMovie(movie) }
     }
   }
 
@@ -29,10 +31,4 @@ object ClientSimulator {
   }
 }
 
-object Helpers {
-  def maybe(chance: Double)(block: => Any) = {
-    if(scala.util.Random.nextFloat() < chance) {
-      block
-    }
-  }
-}
+

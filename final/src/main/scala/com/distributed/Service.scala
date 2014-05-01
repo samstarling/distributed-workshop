@@ -6,7 +6,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import com.zink.cache._
 import chrisloy.json._
-import com.distributed.counters._
+import com.distributed.counters.MovieRatings
 
 case class Movie(id: String, title: String) {}
   
@@ -30,6 +30,7 @@ class MovieServiceImpl extends MovieService {
   val base = "https://api.themoviedb.org/3/"
   val key  = "?api_key=89e5511513f926ee8ac9569963afa8f2"
   val idRegex = """"id":(\d+)""".r
+  val movieRatings = new MovieRatings("129.168.1.0") // TODO What should the node ID be?
   
   def getPopular: Seq[String] = {
     val pop = "movie/popular"
@@ -39,16 +40,16 @@ class MovieServiceImpl extends MovieService {
   }
   
   def getDetailsById(id: String): Option[Movie] = {
-    MovieRatings.incDownloads(id)
+    movieRatings.incDownloads(id)
     Movie.fromJson(Json parse httpGet(base + "movie/" + id + key))
   }
 
   def rateMovieUp(id: String) = {
-    MovieRatings.thumbsUp(id)
+    movieRatings.thumbsUp(id)
   }
 
   def rateMovieDown(id: String) = {
-    MovieRatings.thumbsDown(id)
+    movieRatings.thumbsDown(id)
   }
   
   protected def httpGet(uri: String): String = {

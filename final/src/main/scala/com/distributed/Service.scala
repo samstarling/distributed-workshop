@@ -6,6 +6,8 @@ import java.util.Scanner
 trait MovieService {
   def getPopular: Seq[String]
   def getDetailsById(id: String): String
+  def rateMovieUp(id: String): Unit
+  def rateMovieDown(id: String): Unit
 }
 
 class MovieServiceImpl extends MovieService {
@@ -13,7 +15,7 @@ class MovieServiceImpl extends MovieService {
   val key  = "?api_key=89e5511513f926ee8ac9569963afa8f2"
   val idRegex = """"id":(\d+)""".r
   
-  def getPopular(): Seq[String] = {
+  def getPopular: Seq[String] = {
     val pop = "movie/popular"
     val result = httpGet(base + pop + key)
     
@@ -23,6 +25,14 @@ class MovieServiceImpl extends MovieService {
   def getDetailsById(id: String): String = {
     val movie = "movie/"
     httpGet(base + movie + id + key)
+  }
+
+  def rateMovieUp(id: String) = {
+    ???
+  }
+
+  def rateMovieDown(id: String) = {
+    ???
   }
   
   protected def httpGet(uri: String): String = {

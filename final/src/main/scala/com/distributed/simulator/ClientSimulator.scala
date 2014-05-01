@@ -15,7 +15,7 @@ object ClientSimulator {
   }
 
   def fetchPopularMovies() = {
-    movieService.getPopular()
+    movieService.getPopular
   }
 
   def pickSomeMovies(movies: Seq[String]) = {

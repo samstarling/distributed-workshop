@@ -5,8 +5,3 @@ import com.distributed.simulator.ClientSimulator
 object Main extends App {
   ClientSimulator.run()
 }
-
-
-
-
-

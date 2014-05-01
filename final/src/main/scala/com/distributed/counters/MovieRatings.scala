@@ -14,12 +14,13 @@ object MovieRatings {
         movies.add(movie)
         val incCounter = new GCounter(movies)
         val decCounter = new GCounter(movies)
-        val thumbsCounter = new PNCounter(movies, incCounter, decCounter);
+        val thumbsCounter = new PNCounter(movies, incCounter, decCounter)
         thumbsCounter.inc(movie, 1)
         ratingsCounters.put(movie, thumbsCounter)
       }
     }
   }
+  
   def thumbsDown(movie: String) = {
     ratingsCounters.get(movie) match {
       case Some(counter) => counter.dec(movie, 1)
@@ -28,7 +29,7 @@ object MovieRatings {
         movies.add(movie)
         val incCounter = new GCounter(movies)
         val decCounter = new GCounter(movies)
-        val thumbsCounter = new PNCounter(movies, incCounter, decCounter);
+        val thumbsCounter = new PNCounter(movies, incCounter, decCounter)
         thumbsCounter.dec(movie, 1)
         ratingsCounters.put(movie, thumbsCounter)
       }

@@ -1,17 +1,23 @@
 package com.distributed.simulator
 
 import com.distributed.{Helpers, MovieServiceImpl}
+import scala.concurrent.{ExecutionContext, Await, future, Future}
+import scala.concurrent.duration._
+
 
 object ClientSimulator {
+  import ExecutionContext.Implicits.global
+
   def run(numberOfClients: Integer) = {
-    1 to 5 foreach { id =>
-      Client(s"client$id").run()
+    val futures = 1 to 5 map { id =>
+      future { Client(s"client$id").run() }
     }
+    Await.result(Future.sequence(futures), 60.seconds)
   }
 }
 
 case class Logger(loggerName: String) {
-  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${Console.BLUE_B}$loggerName ${Console.RESET}$msg")
+  def debug(msg: String) = println(s"${Console.RED}[DEBUG] ${Console.BLUE}$loggerName ${Console.RESET}$msg")
 }
 
 case class Client(name: String) {
@@ -32,8 +38,12 @@ case class Client(name: String) {
 
   def pickSomeMovies(movies: Seq[String]) = {
     movies.foreach { movie =>
-      maybe(0.5) { rateMovie(movie) }
+      maybe(0.5)
+        { rateMovie(movie) }
         { logger.debug(s"Decided not to rate $movie") }
+
+      val sleepyTiemz = (1000 * scala.util.Random.nextFloat).toInt
+      Thread.sleep(sleepyTiemz)
     }
   }
 
